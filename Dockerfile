@@ -17,6 +17,7 @@ COPY src/hashes requirements.txt ./
 RUN wget -O "${ARCHIVE}" "http://www.weewx.com/downloads/released_versions/${ARCHIVE}"
 RUN wget -O weewx-mqtt.zip https://github.com/matthewwall/weewx-mqtt/archive/master.zip
 RUN wget -O weewx-interceptor.zip https://github.com/matthewwall/weewx-interceptor/archive/master.zip
+RUN wget -O weatherflow-udp.zip https://github.com/captain-coredump/weatherflow-udp/archive/refs/heads/master.zip
 RUN sha256sum -c < hashes
 
 # WeeWX setup
@@ -32,6 +33,7 @@ WORKDIR ${WEEWX_HOME}
 
 RUN bin/wee_extension --install /tmp/weewx-mqtt.zip
 RUN bin/wee_extension --install /tmp/weewx-interceptor.zip
+RUN bin/wee_extension --install /tmp/weatherflow-udp.zip
 COPY src/entrypoint.sh src/version.txt ./
 
 FROM python:3-slim as stage-2
@@ -44,8 +46,8 @@ ENV WEEWX_VERSION="4.4.0"
 # For a list of pre-defined annotation keys and value types see:
 # https://github.com/opencontainers/image-spec/blob/master/annotations.md
 # Note: Additional labels are added by the build workflow.
-LABEL org.opencontainers.image.authors="markf+github@geekpad.com"
-LABEL org.opencontainers.image.vendor="Geekpad"
+LABEL org.opencontainers.image.authors="dave@droyer.org"
+LABEL org.opencontainers.image.vendor="Dave"
 LABEL com.weewx.version=${WEEWX_VERSION}
 
 RUN addgroup --system --gid ${WEEWX_UID} weewx \
